@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
+  Divider,
   Menu,
   MenuItem,
   Stack,
@@ -21,7 +23,8 @@ function getInitials(name) {
 }
 
 export function UserWidget() {
-  const { isAuthenticated, user, loginDemo, logout } = useAuth();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -31,6 +34,7 @@ export function UserWidget() {
   }, [isAuthenticated, user]);
 
   const role = isAuthenticated && user ? user.role : null;
+  const email = isAuthenticated && user?.email ? user.email : null;
 
   const handleOpen = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -85,36 +89,40 @@ export function UserWidget() {
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         {isAuthenticated ? (
-          <MenuItem
-            onClick={() => {
-              logout();
-              handleClose();
-            }}
-          >
-            Logout (demo)
-          </MenuItem>
-        ) : (
           <>
+            {email && (
+              <MenuItem disabled sx={{ opacity: "1 !important", py: 1.5 }}>
+                <Stack spacing={0.25} sx={{ width: "100%" }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Signed in as
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} noWrap title={email}>
+                    {email}
+                  </Typography>
+                </Stack>
+              </MenuItem>
+            )}
+            {email && <Divider sx={{ my: 0.5 }} />}
             <MenuItem
               onClick={() => {
-                loginDemo("user");
+                logout();
                 handleClose();
               }}
             >
-              Login as user (demo)
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                loginDemo("admin");
-                handleClose();
-              }}
-            >
-              Login as admin (demo)
+              Log out
             </MenuItem>
           </>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate("/login");
+            }}
+          >
+            Sign in
+          </MenuItem>
         )}
       </Menu>
     </>
   );
 }
-

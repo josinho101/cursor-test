@@ -18,8 +18,6 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-
 import { ThemeSwitchControl } from "../components/themeSwitchControl.jsx";
 import { UserWidget } from "../components/userWidget.jsx";
 import { useAuth } from "../auth/authProvider.jsx";
@@ -28,7 +26,7 @@ const drawerWidth = 280;
 
 export function AppShellLayout() {
   const location = useLocation();
-  const { isAuthenticated, user, loginDemo } = useAuth();
+  const { user } = useAuth();
   const isDesktop = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -83,25 +81,6 @@ export function AppShellLayout() {
         ))}
       </List>
       <Box sx={{ flex: 1 }} />
-      {!isAuthenticated && (
-        <>
-          <Divider />
-          <List sx={{ px: 1, py: 1 }}>
-          <ListItemButton
-            onClick={() => {
-              loginDemo("user");
-              closeMobileDrawer();
-            }}
-            sx={{ borderRadius: 2 }}
-          >
-            <ListItemIcon sx={{ minWidth: 44 }}>
-              <LoginOutlinedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Login (demo)" />
-          </ListItemButton>
-          </List>
-        </>
-      )}
     </Box>
   );
 

@@ -30,13 +30,13 @@ Status values:
 
 | ID   | Task                                                                               | Dependencies     | Implementation Status |
 | ---- | ---------------------------------------------------------------------------------- | ---------------- | --------------------- |
-| AU-1 | Build the login screen with form validation and submission handling.               | GF-1, GF-2       | Not Started           |
-| AU-2 | Connect the login flow to JWT-based authentication.                                | AU-1             | Not Started           |
-| AU-3 | Persist authenticated session data on the client.                                  | AU-2             | Not Started           |
-| AU-4 | Restore the user session when the application reloads.                             | AU-3             | Not Started           |
-| AU-5 | Create a user widget that shows the current user identity and available actions.   | AU-3, GF-2       | Not Started           |
-| AU-6 | Implement logout and clear all session-related client state.                       | AU-3, AU-5       | Not Started           |
-| AU-7 | Handle unauthorized and expired-session states by redirecting users appropriately. | AU-2, AU-3, GF-6 | Not Started           |
+| AU-1 | Build the login screen with form validation and submission handling.               | GF-1, GF-2       | Done                  |
+| AU-2 | Connect the login flow to JWT-based authentication.                                | AU-1             | Done                  |
+| AU-3 | Persist authenticated session data on the client.                                  | AU-2             | Done                  |
+| AU-4 | Restore the user session when the application reloads.                             | AU-3             | Done                  |
+| AU-5 | Create a user widget that shows the current user identity and available actions.   | AU-3, GF-2       | Done                  |
+| AU-6 | Implement logout and clear all session-related client state.                       | AU-3, AU-5       | Done                  |
+| AU-7 | Handle unauthorized and expired-session states by redirecting users appropriately. | AU-2, AU-3, GF-6 | Done                  |
 
 
 ## 3. Boards
