@@ -23,6 +23,7 @@ Status values:
 | GF-7 | Define shared loading, empty, and error states for feature screens.                        | GF-2         | Done                  |
 | GF-8 | Ensure the app starts in dark mode by default.                                             | GF-3         | Done                  |
 | GF-9 | Place the user widget at the top-right, next to the theme switch.                          | GF-2, GF-4   | Done                  |
+| GF-10 | Add a collapse toggle (hamburger control) on the left navigation to expand or collapse the sidebar on desktop and close the drawer on mobile. | GF-2, GF-5 | Done                  |
 
 
 ## 2. Authentication

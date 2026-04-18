@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -12,23 +12,34 @@ import {
   ListItemText,
   Stack,
   Toolbar,
+  Tooltip,
   Typography,
   useMediaQuery
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import { ThemeSwitchControl } from "../components/themeSwitchControl.jsx";
 import { UserWidget } from "../components/userWidget.jsx";
 import { useAuth } from "../auth/authProvider.jsx";
+import {
+  getStoredSidebarNavCollapsed,
+  setStoredSidebarNavCollapsed
+} from "./sidebarNavStorage.js";
 
 const drawerWidth = 280;
+const drawerWidthCollapsed = 72;
 
 export function AppShellLayout() {
+  const theme = useTheme();
   const location = useLocation();
   const { user } = useAuth();
   const isDesktop = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopNavCollapsed, setDesktopNavCollapsed] = useState(
+    getStoredSidebarNavCollapsed
+  );
 
   const navItems = useMemo(
     () => [
@@ -48,41 +59,102 @@ export function AppShellLayout() {
 
   const toggleMobileDrawer = () => setMobileOpen((v) => !v);
   const closeMobileDrawer = () => setMobileOpen(false);
+  const toggleDesktopNavCollapsed = () => {
+    setDesktopNavCollapsed((v) => {
+      const next = !v;
+      setStoredSidebarNavCollapsed(next);
+      return next;
+    });
+  };
+
+  const handleDrawerMenuClick = () => {
+    if (isDesktop) toggleDesktopNavCollapsed();
+    else closeMobileDrawer();
+  };
+
+  const navCollapsed = isDesktop && desktopNavCollapsed;
+  const drawerMenuAriaLabel = isDesktop
+    ? navCollapsed
+      ? "Expand navigation"
+      : "Collapse navigation"
+    : "Close navigation";
 
   const drawer = (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <Box sx={{ px: 2, py: 2 }}>
-        <Typography variant="subtitle1" fontWeight={800}>
-          Trello-like
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {user ? `${user.name} (${user.role})` : "Not signed in"}
-        </Typography>
+      <Box
+        sx={{
+          px: navCollapsed ? 0.5 : 2,
+          py: 2,
+          display: "flex",
+          flexDirection: navCollapsed ? "column" : "row",
+          alignItems: navCollapsed ? "center" : "flex-start",
+          gap: navCollapsed ? 1 : 1.5
+        }}
+      >
+        <IconButton
+          color="inherit"
+          edge={navCollapsed ? false : "start"}
+          onClick={handleDrawerMenuClick}
+          aria-label={drawerMenuAriaLabel}
+          sx={{ flexShrink: 0 }}
+        >
+          <MenuIcon />
+        </IconButton>
+        {!navCollapsed && (
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="subtitle1" fontWeight={800}>
+              Trello-like
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {user ? `${user.name} (${user.role})` : "Not signed in"}
+            </Typography>
+          </Box>
+        )}
       </Box>
       <Divider />
-      <List sx={{ px: 1 }}>
-        {navItems.map((item) => (
-          <ListItemButton
-            key={item.to}
-            component={NavLink}
-            to={item.to}
-            onClick={closeMobileDrawer}
-            sx={{
-              borderRadius: 2,
-              my: 0.5,
-              "&.active": {
-                bgcolor: "action.selected"
-              }
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: 44 }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} />
-          </ListItemButton>
-        ))}
+      <List sx={{ px: navCollapsed ? 0.5 : 1 }}>
+        {navItems.map((item) => {
+          const linkButton = (
+            <ListItemButton
+              component={NavLink}
+              to={item.to}
+              onClick={closeMobileDrawer}
+              sx={{
+                borderRadius: 2,
+                my: 0.5,
+                justifyContent: navCollapsed ? "center" : "flex-start",
+                px: navCollapsed ? 1 : 2,
+                "&.active": {
+                  bgcolor: "action.selected"
+                }
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: navCollapsed ? 0 : 44, justifyContent: "center" }}>
+                {item.icon}
+              </ListItemIcon>
+              {!navCollapsed && <ListItemText primary={item.label} />}
+            </ListItemButton>
+          );
+          return (
+            <Fragment key={item.to}>
+              {navCollapsed ? (
+                <Tooltip title={item.label} placement="right">
+                  {linkButton}
+                </Tooltip>
+              ) : (
+                linkButton
+              )}
+            </Fragment>
+          );
+        })}
       </List>
       <Box sx={{ flex: 1 }} />
     </Box>
   );
+
+  const resolvedDrawerWidth = navCollapsed ? drawerWidthCollapsed : drawerWidth;
+  /** Fixed AppBar sits above the drawer z-index; offset permanent drawer so the header is not hidden. */
+  const desktopDrawerTop = theme.spacing(8);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100dvh" }}>
@@ -124,7 +196,15 @@ export function AppShellLayout() {
 
       <Box
         component="nav"
-        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+        sx={{
+          width: { md: resolvedDrawerWidth },
+          flexShrink: { md: 0 },
+          transition: (theme) =>
+            theme.transitions.create("width", {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen
+            })
+        }}
         aria-label="Sidebar navigation"
       >
         <Drawer
@@ -134,8 +214,18 @@ export function AppShellLayout() {
           ModalProps={{ keepMounted: true }}
           sx={{
             "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box"
+              width: isDesktop ? resolvedDrawerWidth : drawerWidth,
+              boxSizing: "border-box",
+              transition: (t) =>
+                t.transitions.create("width", {
+                  easing: t.transitions.easing.sharp,
+                  duration: t.transitions.duration.leavingScreen
+                }),
+              overflowX: "hidden",
+              ...(isDesktop && {
+                top: desktopDrawerTop,
+                height: `calc(100dvh - ${desktopDrawerTop})`
+              })
             }
           }}
         >
