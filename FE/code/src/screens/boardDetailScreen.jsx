@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import {
   Breadcrumbs,
@@ -26,6 +26,15 @@ export function BoardDetailScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?.id ?? "";
+
+  const assignableMembers = useMemo(() => {
+    if (!user) return [];
+    return [
+      { id: user.id, name: user.name },
+      { id: "demo-member-1", name: "Alex Chen" },
+      { id: "demo-member-2", name: "Sam Rivera" }
+    ];
+  }, [user]);
 
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -139,7 +148,7 @@ export function BoardDetailScreen() {
 
       {!loading && !loadError && board ? (
         <Paper variant="outlined" sx={{ p: 2 }}>
-          <BoardListsSection userId={userId} boardId={board.id} />
+          <BoardListsSection userId={userId} boardId={board.id} assignableMembers={assignableMembers} />
         </Paper>
       ) : null}
 

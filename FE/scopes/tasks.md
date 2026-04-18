@@ -72,18 +72,18 @@ Status values:
 
 | ID    | Task                                                          | Dependencies | Implementation Status |
 | ----- | ------------------------------------------------------------- | ------------ | --------------------- |
-| CA-1  | Display cards inside each list with key summary information.  | LI-1, LI-7   | Not Started           |
-| CA-2  | Add a create-card flow within a selected list.                | CA-1         | Not Started           |
-| CA-3  | Implement card details editing for title and description.     | CA-1         | Not Started           |
-| CA-4  | Add a delete-card action with confirmation.                   | CA-1         | Not Started           |
-| CA-5  | Enable drag-and-drop to move cards across lists.              | CA-1         | Not Started           |
-| CA-6  | Enable drag-and-drop to reorder cards within the same list.   | CA-1         | Not Started           |
-| CA-7  | Persist card position changes after reorder and move actions. | CA-5, CA-6   | Not Started           |
-| CA-8  | Add member assignment UI for cards.                           | CA-3         | Not Started           |
-| CA-9  | Allow setting and updating due dates on cards.                | CA-3         | Not Started           |
-| CA-10 | Add label or tag selection and display on cards.              | CA-3         | Not Started           |
-| CA-11 | Build a comments section within the card details view.        | CA-3         | Not Started           |
-| CA-12 | Support adding new comments and rendering comment history.    | CA-11        | Not Started           |
+| CA-1  | Display cards inside each list with key summary information.  | LI-1, LI-7   | Done                  |
+| CA-2  | Add a create-card flow within a selected list.                | CA-1         | Done                  |
+| CA-3  | Implement card details editing for title and description.     | CA-1         | Done                  |
+| CA-4  | Add a delete-card action with confirmation.                   | CA-1         | Done                  |
+| CA-5  | Enable drag-and-drop to move cards across lists.              | CA-1         | Done                  |
+| CA-6  | Enable drag-and-drop to reorder cards within the same list.   | CA-1         | Done                  |
+| CA-7  | Persist card position changes after reorder and move actions. | CA-5, CA-6   | Done                  |
+| CA-8  | Add member assignment UI for cards.                           | CA-3         | Done                  |
+| CA-9  | Allow setting and updating due dates on cards.                | CA-3         | Done                  |
+| CA-10 | Add label or tag selection and display on cards.              | CA-3         | Done                  |
+| CA-11 | Build a comments section within the card details view.        | CA-3         | Done                  |
+| CA-12 | Support adding new comments and rendering comment history.    | CA-11        | Done                  |
 
 
 ## 6. Subtasks and Checklists

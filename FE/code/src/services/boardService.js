@@ -1,5 +1,6 @@
 import { readBoardsDocument, writeBoardsDocument } from "./boardStorage.js";
 import { clearListsForBoard } from "./listStorage.js";
+import { clearCardsForBoard } from "./cardStorage.js";
 
 const NAME_MAX = 120;
 const DESCRIPTION_MAX = 2000;
@@ -131,4 +132,5 @@ export async function deleteBoardForUser(userId, boardId) {
   }
   writeBoardsDocument(userId, { boards: next });
   clearListsForBoard(userId, boardId);
+  clearCardsForBoard(userId, boardId);
 }

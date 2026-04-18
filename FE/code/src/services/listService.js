@@ -1,4 +1,5 @@
 import { readListsDocument, writeListsDocument } from "./listStorage.js";
+import { deleteCardsForList } from "./cardService.js";
 
 const NAME_MAX = 120;
 
@@ -164,6 +165,7 @@ export async function reorderListsForBoard(userId, boardId, orderedListIds) {
  * @returns {Promise<void>}
  */
 export async function deleteListForBoard(userId, boardId, listId) {
+  await deleteCardsForList(userId, boardId, listId);
   const doc = readListsDocument(userId, boardId);
   const next = doc.lists.filter((l) => l.id !== listId);
   if (next.length === doc.lists.length) {
