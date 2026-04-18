@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Build output (Vite / CRA / generic)
+dist/
+build/
+out/
+
+# Local env and secrets (keep .env.example committed if you use one)
+.env
+.env.*
+!.env.example
+
+# Logs and debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Vite
+*.local
+
+# TypeScript (if added later)
+*.tsbuildinfo
+
+# ESLint / tooling caches
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+
+# Optional: Turborepo / monorepo
+.turbo/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Misc
+*.pem

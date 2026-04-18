@@ -1,0 +1,14 @@
+---
+description: Automatically check, stage, commit, and push changes to origin
+globs: 
+alwaysApply: false
+---
+
+# Git Workflow Automation
+When this rule is triggered or referenced:
+1. **Check Code**: Run `git status` and a quick lint or build check (e.g., `npm run lint` or `npm test`) to ensure no errors.
+2. **Stage Changes**: Execute `git add .` to stage all modified and new files.
+3. **Commit**: Generate a concise commit message following Conventional Commits (e.g., `feat: ...`, `fix: ...`) and execute the commit.
+4. **Push**: Execute `git push origin [current-branch]` to sync with the remote repository.
+
+**Safety Constraint**: If any tests or linting steps fail, stop the process and report the errors before staging.
