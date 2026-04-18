@@ -13,6 +13,7 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { useAuth } from "../auth/authProvider.jsx";
+import { BoardListsSection } from "../components/boardListsSection.jsx";
 import { DeleteBoardDialog } from "../components/deleteBoardDialog.jsx";
 import { EditBoardDialog } from "../components/editBoardDialog.jsx";
 import { SharedEmpty } from "../components/sharedEmpty.jsx";
@@ -133,6 +134,12 @@ export function BoardDetailScreen() {
               Back to boards
             </Button>
           </Stack>
+        </Paper>
+      ) : null}
+
+      {!loading && !loadError && board ? (
+        <Paper variant="outlined" sx={{ p: 2 }}>
+          <BoardListsSection userId={userId} boardId={board.id} />
         </Paper>
       ) : null}
 

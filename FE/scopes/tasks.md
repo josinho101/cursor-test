@@ -58,13 +58,13 @@ Status values:
 
 | ID   | Task                                                                      | Dependencies     | Implementation Status |
 | ---- | ------------------------------------------------------------------------- | ---------------- | --------------------- |
-| LI-1 | Display all lists within a selected board in a clear column-based layout. | BO-4, GF-5, GF-7 | Not Started           |
-| LI-2 | Add a create-list flow within a board.                                    | LI-1             | Not Started           |
-| LI-3 | Implement inline or modal-based list renaming.                            | LI-1             | Not Started           |
-| LI-4 | Add drag-and-drop support to reorder lists within a board.                | LI-1             | Not Started           |
-| LI-5 | Persist updated list order after drag-and-drop actions.                   | LI-4             | Not Started           |
-| LI-6 | Add a delete-list action with confirmation.                               | LI-1             | Not Started           |
-| LI-7 | Handle empty-board and empty-list states gracefully.                      | LI-1, GF-7       | Not Started           |
+| LI-1 | Display all lists within a selected board in a clear column-based layout. | BO-4, GF-5, GF-7 | Done                  |
+| LI-2 | Add a create-list flow within a board.                                    | LI-1             | Done                  |
+| LI-3 | Implement inline or modal-based list renaming.                            | LI-1             | Done                  |
+| LI-4 | Add drag-and-drop support to reorder lists within a board.                | LI-1             | Done                  |
+| LI-5 | Persist updated list order after drag-and-drop actions.                   | LI-4             | Done                  |
+| LI-6 | Add a delete-list action with confirmation.                               | LI-1             | Done                  |
+| LI-7 | Handle empty-board and empty-list states gracefully.                      | LI-1, GF-7       | Done                  |
 
 
 ## 5. Cards and Tasks

@@ -1,4 +1,5 @@
 import { readBoardsDocument, writeBoardsDocument } from "./boardStorage.js";
+import { clearListsForBoard } from "./listStorage.js";
 
 const NAME_MAX = 120;
 const DESCRIPTION_MAX = 2000;
@@ -129,4 +130,5 @@ export async function deleteBoardForUser(userId, boardId) {
     throw new Error("Board not found.");
   }
   writeBoardsDocument(userId, { boards: next });
+  clearListsForBoard(userId, boardId);
 }
