@@ -12,18 +12,19 @@ Status values:
 ## 1. General / Foundation
 
 
-| ID   | Task                                                                                       | Dependencies | Implementation Status |
-| ---- | ------------------------------------------------------------------------------------------ | ------------ | --------------------- |
-| GF-1 | Set up the React application structure using Material UI as the primary component library. | None         | Done                  |
-| GF-2 | Define the main application layout for authenticated and unauthenticated screens.          | GF-1         | Done                  |
-| GF-3 | Implement dark mode and light mode theme configuration.                                    | GF-1         | Done                  |
-| GF-4 | Add a theme switch control that is accessible from the main UI.                            | GF-2, GF-3   | Done                  |
-| GF-5 | Ensure core layouts and screens are responsive across desktop, tablet, and mobile sizes.   | GF-2         | Done                  |
-| GF-6 | Establish route protection rules for authenticated and role-restricted pages.              | GF-2         | Done                  |
-| GF-7 | Define shared loading, empty, and error states for feature screens.                        | GF-2         | Done                  |
-| GF-8 | Ensure the app starts in dark mode by default.                                             | GF-3         | Done                  |
-| GF-9 | Place the user widget at the top-right, next to the theme switch.                          | GF-2, GF-4   | Done                  |
-| GF-10 | Add a collapse toggle (hamburger control) on the left navigation to expand or collapse the sidebar on desktop and close the drawer on mobile. | GF-2, GF-5 | Done                  |
+| ID    | Task                                                                                                                                          | Dependencies | Implementation Status |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------------- |
+| GF-1  | Set up the React application structure using Material UI as the primary component library.                                                    | None         | Done                  |
+| GF-2  | Define the main application layout for authenticated and unauthenticated screens.                                                             | GF-1         | Done                  |
+| GF-3  | Implement dark mode and light mode theme configuration.                                                                                       | GF-1         | Done                  |
+| GF-4  | Add a theme switch control that is accessible from the main UI.                                                                               | GF-2, GF-3   | Done                  |
+| GF-5  | Ensure core layouts and screens are responsive across desktop, tablet, and mobile sizes.                                                      | GF-2         | Done                  |
+| GF-6  | Establish route protection rules for authenticated and role-restricted pages.                                                                 | GF-2         | Done                  |
+| GF-7  | Define shared loading, empty, and error states for feature screens.                                                                           | GF-2         | Done                  |
+| GF-8  | Ensure the app starts in dark mode by default.                                                                                                | GF-3         | Done                  |
+| GF-9  | Place the user widget at the top-right, next to the theme switch.                                                                             | GF-2, GF-4   | Done                  |
+| GF-10 | Add a collapse toggle (hamburger control) on the left navigation to expand or collapse the sidebar on desktop and close the drawer on mobile. | GF-2, GF-5   | Done                  |
+| GF-11 | Style application scrollbars to better match the Material UI look and dark/light themes.                                                      | GF-3         | Done                  |
 
 
 ## 2. Authentication
@@ -57,15 +58,16 @@ Status values:
 ## 4. Lists
 
 
-| ID   | Task                                                                      | Dependencies     | Implementation Status |
-| ---- | ------------------------------------------------------------------------- | ---------------- | --------------------- |
-| LI-1 | Display all lists within a selected board in a clear column-based layout. | BO-4, GF-5, GF-7 | Done                  |
-| LI-2 | Add a create-list flow within a board.                                    | LI-1             | Done                  |
-| LI-3 | Implement inline or modal-based list renaming.                            | LI-1             | Done                  |
-| LI-4 | Add drag-and-drop support to reorder lists within a board.                | LI-1             | Done                  |
-| LI-5 | Persist updated list order after drag-and-drop actions.                   | LI-4             | Done                  |
-| LI-6 | Add a delete-list action with confirmation.                               | LI-1             | Done                  |
-| LI-7 | Handle empty-board and empty-list states gracefully.                      | LI-1, GF-7       | Done                  |
+| ID   | Task                                                                            | Dependencies     | Implementation Status |
+| ---- | ------------------------------------------------------------------------------- | ---------------- | --------------------- |
+| LI-1 | Display all lists within a selected board in a clear column-based layout.       | BO-4, GF-5, GF-7 | Done                  |
+| LI-2 | Add a create-list flow within a board.                                          | LI-1             | Done                  |
+| LI-3 | Implement inline or modal-based list renaming.                                  | LI-1             | Done                  |
+| LI-4 | Add drag-and-drop support to reorder lists within a board.                      | LI-1             | Done                  |
+| LI-5 | Persist updated list order after drag-and-drop actions.                         | LI-4             | Done                  |
+| LI-6 | Add a delete-list action with confirmation.                                     | LI-1             | Done                  |
+| LI-7 | Handle empty-board and empty-list states gracefully.                            | LI-1, GF-7       | Done                  |
+| LI-8 | Show drag ghost previews while reordering lists and cards during drag-and-drop. | LI-4, CA-5, CA-6 | Done                  |
 
 
 ## 5. Cards and Tasks
@@ -92,30 +94,16 @@ Status values:
 
 | ID   | Task                                                       | Dependencies | Implementation Status |
 | ---- | ---------------------------------------------------------- | ------------ | --------------------- |
-| CH-1 | Add a checklist section inside the card details view.      | CA-3         | Not Started           |
-| CH-2 | Implement checklist creation within a card.                | CH-1         | Not Started           |
-| CH-3 | Add checklist items with creation and basic validation.    | CH-2         | Not Started           |
-| CH-4 | Allow checklist items to be marked complete or incomplete. | CH-3         | Not Started           |
-| CH-5 | Support reordering checklist items.                        | CH-3         | Not Started           |
-| CH-6 | Show checklist progress as a completion percentage.        | CH-3, CH-4   | Not Started           |
-| CH-7 | Keep checklist progress updated when item states change.   | CH-4, CH-6   | Not Started           |
+| CH-1 | Add a checklist section inside the card details view.      | CA-3         | Done                  |
+| CH-2 | Implement checklist creation within a card.                | CH-1         | Done                  |
+| CH-3 | Add checklist items with creation and basic validation.    | CH-2         | Done                  |
+| CH-4 | Allow checklist items to be marked complete or incomplete. | CH-3         | Done                  |
+| CH-5 | Support reordering checklist items.                        | CH-3         | Done                  |
+| CH-6 | Show checklist progress as a completion percentage.        | CH-3, CH-4   | Done                  |
+| CH-7 | Keep checklist progress updated when item states change.   | CH-4, CH-6   | Done                  |
 
 
-## 7. Collaboration
-
-
-| ID   | Task                                                                                    | Dependencies           | Implementation Status |
-| ---- | --------------------------------------------------------------------------------------- | ---------------------- | --------------------- |
-| CO-1 | Reflect real-time board and card updates in the UI when another user makes changes.     | BO-4, LI-1, CA-1, CA-3 | Not Started           |
-| CO-2 | Handle optimistic or loading states for collaborative updates to reduce user confusion. | CO-1, GF-7             | Not Started           |
-| CO-3 | Support user mentions while writing card comments.                                      | CA-11, CA-12           | Not Started           |
-| CO-4 | Highlight or format mentioned users in comment content.                                 | CO-3                   | Not Started           |
-| CO-5 | Build a notifications UI for assignments, due dates, comments, and mentions.            | AU-5, GF-2             | Not Started           |
-| CO-6 | Show unread vs. read notification states.                                               | CO-5                   | Not Started           |
-| CO-7 | Allow users to view and clear notification items.                                       | CO-5, CO-6             | Not Started           |
-
-
-## 8. Search, Filter, and Sorting
+## 7. Search, Filter, and Sorting
 
 
 | ID   | Task                                                                      | Dependencies            | Implementation Status |
@@ -130,7 +118,7 @@ Status values:
 | SF-8 | Provide empty-state messaging when no search or filter results are found. | SF-2, SF-7, GF-7        | Not Started           |
 
 
-## 9. Admin Features
+## 8. Admin Features
 
 
 | ID   | Task                                                                          | Dependencies     | Implementation Status |

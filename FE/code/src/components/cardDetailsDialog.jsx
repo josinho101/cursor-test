@@ -17,6 +17,7 @@ import {
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 import { useAuth } from "../auth/authProvider.jsx";
+import { ChecklistSection } from "./checklistSection.jsx";
 import {
   addCommentToCard,
   CARD_LABEL_OPTIONS,
@@ -63,12 +64,14 @@ export function CardDetailsDialog({
   const [dueDate, setDueDate] = useState("");
   const [labels, setLabels] = useState([]);
   const [comments, setComments] = useState([]);
+  const [checklists, setChecklists] = useState([]);
   const [commentBody, setCommentBody] = useState("");
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [commentError, setCommentError] = useState("");
   const [saving, setSaving] = useState(false);
   const [postingComment, setPostingComment] = useState(false);
+  const [savingChecklist, setSavingChecklist] = useState(false);
 
   const memberOptions = useMemo(() => assignableMembers ?? [], [assignableMembers]);
 
@@ -80,6 +83,7 @@ export function CardDetailsDialog({
     setDueDate(card.dueDate ? String(card.dueDate).slice(0, 10) : "");
     setLabels(Array.isArray(card.labels) ? card.labels : []);
     setComments(Array.isArray(card.comments) ? [...card.comments] : []);
+    setChecklists(Array.isArray(card.checklists) ? [...card.checklists] : []);
     setCommentBody("");
     setErrors({});
     setSubmitError("");
@@ -122,6 +126,21 @@ export function CardDetailsDialog({
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpdateChecklists = async (nextChecklists) => {
+    if (!card) return;
+    setSavingChecklist(true);
+    setSubmitError("");
+    try {
+      setChecklists(nextChecklists);
+      await updateCardForBoard(userId, boardId, card.id, { checklists: nextChecklists });
+      await onUpdated();
+    } catch (err) {
+      setSubmitError(err?.message ?? "Could not save checklist changes.");
+    } finally {
+      setSavingChecklist(false);
     }
   };
 
@@ -248,6 +267,14 @@ export function CardDetailsDialog({
                 Save changes
               </Button>
             </Stack>
+
+            <Divider />
+
+            <ChecklistSection
+              checklists={checklists}
+              disabled={saving || postingComment || savingChecklist}
+              onChange={handleUpdateChecklists}
+            />
 
             <Divider />
 

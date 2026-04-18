@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   closestCorners,
   DndContext,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -110,6 +111,78 @@ function applyCardDrag(items, listIds, activeId, overId) {
 
 /**
  * @param {{
+ *   list: import("../services/listStorage.js").StoredList,
+ *   cardCount: number
+ * }} props
+ */
+function ListDragGhost({ list, cardCount }) {
+  return (
+    <Paper
+      variant="outlined"
+      sx={{
+        width: 280,
+        borderRadius: 3,
+        opacity: 0.96,
+        boxShadow: 8,
+        bgcolor: "background.paper"
+      }}
+    >
+      <Stack sx={{ px: 1.25, py: 1, borderBottom: 1, borderColor: "divider", bgcolor: "action.hover" }}>
+        <Typography variant="subtitle1" fontWeight={800} noWrap>
+          {list.name}
+        </Typography>
+      </Stack>
+      <Box sx={{ p: 1.25 }}>
+        <Typography variant="body2" color="text.secondary">
+          {cardCount} {cardCount === 1 ? "card" : "cards"}
+        </Typography>
+      </Box>
+    </Paper>
+  );
+}
+
+/**
+ * @param {{
+ *   card: import("../services/cardStorage.js").StoredCard,
+ *   memberCount: number
+ * }} props
+ */
+function CardDragGhost({ card, memberCount }) {
+  const dueLabel = card.dueDate ? String(card.dueDate).slice(0, 10) : "";
+  return (
+    <Paper
+      variant="outlined"
+      sx={{
+        minWidth: 240,
+        maxWidth: 320,
+        borderRadius: 2,
+        p: 1.25,
+        opacity: 0.96,
+        boxShadow: 8,
+        bgcolor: "background.paper"
+      }}
+    >
+      <Typography variant="subtitle2" fontWeight={700} sx={{ wordBreak: "break-word" }}>
+        {card.title}
+      </Typography>
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+        {dueLabel ? (
+          <Typography variant="caption" color="text.secondary">
+            Due {dueLabel}
+          </Typography>
+        ) : null}
+        {memberCount > 0 ? (
+          <Typography variant="caption" color="text.secondary">
+            {memberCount} {memberCount === 1 ? "member" : "members"}
+          </Typography>
+        ) : null}
+      </Stack>
+    </Paper>
+  );
+}
+
+/**
+ * @param {{
  *   userId: string,
  *   boardId: string,
  *   assignableMembers: { id: string, name: string }[]
@@ -127,6 +200,7 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
   const [deleteList, setDeleteList] = useState(null);
   const [detailsCard, setDetailsCard] = useState(null);
   const [deleteCard, setDeleteCard] = useState(null);
+  const [activeDrag, setActiveDrag] = useState(null);
 
   const memberDirectory = useMemo(() => {
     const m = new Map();
@@ -170,54 +244,67 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const handleDragStart = (event) => {
+    const activeId = String(event.active.id);
+    const activeIsList = lists.some((l) => l.id === activeId);
+    setActiveDrag({ type: activeIsList ? "list" : "card", id: activeId });
+  };
+
+  const handleDragCancel = () => {
+    setActiveDrag(null);
+  };
+
   const handleDragEnd = async (event) => {
     const { active, over } = event;
     setReorderError("");
     setCardOrderError("");
+    try {
+      if (!over) return;
 
-    if (!over) return;
+      const activeIsList = lists.some((l) => l.id === active.id);
+      if (activeIsList) {
+        if (!lists.some((l) => l.id === over.id)) {
+          return;
+        }
+        if (active.id === over.id) return;
+        const oldIndex = lists.findIndex((l) => l.id === active.id);
+        const newIndex = lists.findIndex((l) => l.id === over.id);
+        if (oldIndex === -1 || newIndex === -1) return;
 
-    const activeIsList = lists.some((l) => l.id === active.id);
-    if (activeIsList) {
-      if (!lists.some((l) => l.id === over.id)) {
+        const previous = lists;
+        const reordered = arrayMove(lists, oldIndex, newIndex);
+        setLists(reordered);
+        try {
+          await reorderListsForBoard(
+            userId,
+            boardId,
+            reordered.map((l) => l.id)
+          );
+        } catch (err) {
+          setReorderError(err?.message ?? "Could not save list order.");
+          setLists(previous);
+        }
         return;
       }
-      if (active.id === over.id) return;
-      const oldIndex = lists.findIndex((l) => l.id === active.id);
-      const newIndex = lists.findIndex((l) => l.id === over.id);
-      if (oldIndex === -1 || newIndex === -1) return;
 
-      const previous = lists;
-      const reordered = arrayMove(lists, oldIndex, newIndex);
-      setLists(reordered);
+      const listIds = lists.map((l) => l.id);
+      if (!listIds.length) return;
+
+      const items = buildCardItemsByListId(lists, cards);
+      const nextItems = applyCardDrag(items, listIds, active.id, over.id);
+      if (!nextItems) return;
+
+      const previousCards = cards;
       try {
-        await reorderListsForBoard(
-          userId,
-          boardId,
-          reordered.map((l) => l.id)
-        );
+        const updated = await persistCardOrderByList(userId, boardId, nextItems);
+        setCards(updated);
       } catch (err) {
-        setReorderError(err?.message ?? "Could not save list order.");
-        setLists(previous);
+        setCardOrderError(err?.message ?? "Could not save card order.");
+        setCards(previousCards);
+        void reloadBoardData();
       }
-      return;
-    }
-
-    const listIds = lists.map((l) => l.id);
-    if (!listIds.length) return;
-
-    const items = buildCardItemsByListId(lists, cards);
-    const nextItems = applyCardDrag(items, listIds, active.id, over.id);
-    if (!nextItems) return;
-
-    const previousCards = cards;
-    try {
-      const updated = await persistCardOrderByList(userId, boardId, nextItems);
-      setCards(updated);
-    } catch (err) {
-      setCardOrderError(err?.message ?? "Could not save card order.");
-      setCards(previousCards);
-      void reloadBoardData();
+    } finally {
+      setActiveDrag(null);
     }
   };
 
@@ -226,6 +313,8 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
   }
 
   const detailsCardLive = detailsCard ? cards.find((c) => c.id === detailsCard.id) ?? detailsCard : null;
+  const activeListGhost = activeDrag?.type === "list" ? lists.find((l) => l.id === activeDrag.id) ?? null : null;
+  const activeCardGhost = activeDrag?.type === "card" ? cards.find((c) => c.id === activeDrag.id) ?? null : null;
 
   return (
     <Stack spacing={2}>
@@ -277,7 +366,13 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
               {cardOrderError}
             </Typography>
           ) : null}
-          <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragCancel={handleDragCancel}
+            onDragEnd={handleDragEnd}
+          >
             <SortableContext items={lists.map((l) => l.id)} strategy={horizontalListSortingStrategy}>
               <Box
                 sx={{
@@ -305,6 +400,17 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
                 ))}
               </Box>
             </SortableContext>
+            <DragOverlay>
+              {activeListGhost ? (
+                <ListDragGhost list={activeListGhost} cardCount={sortCardsForList(cards, activeListGhost.id).length} />
+              ) : null}
+              {activeCardGhost ? (
+                <CardDragGhost
+                  card={activeCardGhost}
+                  memberCount={Array.isArray(activeCardGhost.memberIds) ? activeCardGhost.memberIds.length : 0}
+                />
+              ) : null}
+            </DragOverlay>
           </DndContext>
         </Stack>
       ) : null}

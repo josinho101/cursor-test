@@ -19,6 +19,11 @@ function cardsStorageKey(userId, boardId) {
  *   dueDate: string | null,
  *   labels: string[],
  *   comments: { id: string, authorId: string, authorName: string, body: string, createdAt: string }[],
+ *   checklists: {
+ *     id: string,
+ *     title: string,
+ *     items: { id: string, text: string, completed: boolean, position: number }[]
+ *   }[],
  *   createdAt: string,
  *   updatedAt: string
  * }} StoredCard

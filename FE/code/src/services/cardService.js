@@ -3,6 +3,8 @@ import { readCardsDocument, writeCardsDocument } from "./cardStorage.js";
 const TITLE_MAX = 200;
 const DESCRIPTION_MAX = 5000;
 const COMMENT_BODY_MAX = 2000;
+const CHECKLIST_TITLE_MAX = 200;
+const CHECKLIST_ITEM_TEXT_MAX = 500;
 
 /** @type {readonly string[]} */
 export const CARD_LABEL_OPTIONS = Object.freeze(["Bug", "Feature", "Docs", "Design", "Release"]);
@@ -14,6 +16,46 @@ function newId() {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {import("./cardStorage.js").StoredCard["checklists"]}
+ */
+function normalizeChecklists(raw) {
+  const checklists = Array.isArray(raw) ? raw : [];
+  const normalized = [];
+
+  for (const c of checklists) {
+    const id = String(c?.id ?? "").trim();
+    if (!id) continue;
+    const title = String(c?.title ?? "").trim().slice(0, CHECKLIST_TITLE_MAX);
+
+    const itemsRaw = Array.isArray(c?.items) ? c.items : [];
+    const items = [];
+    for (const item of itemsRaw) {
+      const itemId = String(item?.id ?? "").trim();
+      const text = String(item?.text ?? "").trim();
+      if (!itemId || !text) continue;
+      items.push({
+        id: itemId,
+        text: text.slice(0, CHECKLIST_ITEM_TEXT_MAX),
+        completed: Boolean(item?.completed),
+        position: 0
+      });
+    }
+    items.forEach((it, index) => {
+      it.position = index;
+    });
+
+    normalized.push({
+      id,
+      title,
+      items
+    });
+  }
+
+  return normalized;
 }
 
 /**
@@ -117,6 +159,7 @@ export async function createCardForList(userId, boardId, listId, input) {
     dueDate: null,
     labels: [],
     comments: [],
+    checklists: [],
     createdAt: ts,
     updatedAt: ts
   };
@@ -134,7 +177,8 @@ export async function createCardForList(userId, boardId, listId, input) {
  *   description?: unknown,
  *   memberIds?: unknown,
  *   dueDate?: unknown,
- *   labels?: unknown
+ *   labels?: unknown,
+ *   checklists?: unknown
  * }} patch
  * @returns {Promise<import("./cardStorage.js").StoredCard>}
  */
@@ -189,6 +233,10 @@ export async function updateCardForBoard(userId, boardId, cardId, patch) {
       ? raw.map((x) => String(x).trim()).filter((x) => CARD_LABEL_OPTIONS.includes(x))
       : [];
     next.labels = [...new Set(labels)];
+  }
+
+  if (patch.checklists !== undefined) {
+    next.checklists = normalizeChecklists(patch.checklists);
   }
 
   next.updatedAt = nowIso();
