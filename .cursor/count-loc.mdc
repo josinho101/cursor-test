@@ -1,0 +1,32 @@
+---
+description: Trigger this rule to count Lines of Code (LOC) in the React Vite project
+globs: FE/code/src/**/*.{js,jsx,ts,tsx,css}, FE/code/index.html, FE/code/vite.config.*
+alwaysApply: false
+---
+
+# LOC Analysis Rule
+When requested to count LOC or analyze project size:
+1. **Target directory**: The Vite app lives under **`FE/code/`**. Count **`FE/code/src/`** only, plus root config next to `src/`: **`index.html`** and **`vite.config.js`** / **`vite.config.ts`** (whichever exists). Do not count `FE/scopes/` or other folders unless the user asks.
+2. **Exclusions**: Ignore **`node_modules`**, **`dist`**, **`.git`**, and lock files. Limiting the walk to `src/` and the named config files keeps those out.
+3. **Execution** (from the **repository root** `cursor-test/`):
+
+   **Recommended — Node (Windows, macOS, Linux; matches `wc -l` newline semantics):**
+
+   ```powershell
+   Set-Location FE\code
+   node -e "const fs=require('fs'),path=require('path');const exts=new Set(['.ts','.tsx','.js','.jsx','.css']);const lc=p=>fs.readFileSync(p,'utf8').split(/\r?\n/).length;const by={};let t=0;const add=(k,n)=>{by[k]=(by[k]||0)+n;t+=n;};(function w(d){for(const x of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,x.name);if(x.isDirectory())w(p);else{const g=path.extname(x.name).toLowerCase();if(exts.has(g))add(g,lc(p));}}})(path.join(process.cwd(),'src'));for(const f of ['index.html','vite.config.js','vite.config.ts']){if(fs.existsSync(f))add(f,lc(f));}console.log(JSON.stringify({by,total:t},null,2));"
+   ```
+
+   On **macOS / Linux** you can use the same `node -e "..."` after `cd FE/code`.
+
+   **Optional — Git Bash / WSL / macOS / Linux** (`find` + `wc`, from repo root):
+
+   ```bash
+   cd FE/code && find src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.css" \) -print0 | xargs -0 wc -l && wc -l index.html vite.config.js 2>/dev/null; wc -l vite.config.ts 2>/dev/null; true
+   ```
+
+   Use `-print0` and `xargs -0` so paths with spaces are safe. Omit `wc` lines for config files that do not exist.
+
+   **Do not rely on** `npx cloc` here unless Perl is installed (the stock `cloc` Windows build often fails with `'perl' is not recognized`).
+
+4. **Output**: Turn the `by` map into a small table (`.jsx`, `.js` under `src/`, `.ts` / `.tsx` / `.css` if non-zero, plus `index.html` and `vite.config.*`), then state **`total`** lines for `src/` plus those config files.
