@@ -8,7 +8,8 @@ import { RoleProtectedRoute } from "./roleProtectedRoute.jsx";
 import { RootRedirect } from "./rootRedirect.jsx";
 
 import { LoginScreen } from "../screens/loginScreen.jsx";
-import { DashboardScreen } from "../screens/dashboardScreen.jsx";
+import { BoardsScreen } from "../screens/boardsScreen.jsx";
+import { BoardDetailScreen } from "../screens/boardDetailScreen.jsx";
 import { AdminScreen } from "../screens/adminScreen.jsx";
 import { ForbiddenScreen } from "../screens/forbiddenScreen.jsx";
 import { NotFoundScreen } from "../screens/notFoundScreen.jsx";
@@ -38,7 +39,11 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashboardScreen />
+        element: <BoardsScreen />
+      },
+      {
+        path: "boards/:boardId",
+        element: <BoardDetailScreen />
       },
       {
         path: "admin",

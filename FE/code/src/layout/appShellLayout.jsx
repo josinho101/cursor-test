@@ -34,7 +34,7 @@ export function AppShellLayout() {
     () => [
       {
         to: "/app",
-        label: "Dashboard",
+        label: "Boards",
         icon: <DashboardOutlinedIcon />
       },
       {
@@ -109,7 +109,11 @@ export function AppShellLayout() {
             </IconButton>
           )}
           <Typography variant="h6" sx={{ flex: 1 }} fontWeight={700}>
-            {location.pathname.startsWith("/app/admin") ? "Admin" : "Dashboard"}
+            {location.pathname.startsWith("/app/admin")
+              ? "Admin"
+              : location.pathname.startsWith("/app/boards/")
+                ? "Board"
+                : "Boards"}
           </Typography>
           <Stack direction="row" spacing={1} alignItems="center">
             <ThemeSwitchControl />

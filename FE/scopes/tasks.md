@@ -44,13 +44,13 @@ Status values:
 
 | ID   | Task                                                                             | Dependencies           | Implementation Status |
 | ---- | -------------------------------------------------------------------------------- | ---------------------- | --------------------- |
-| BO-1 | Build the boards view where users can see available boards.                      | AU-4, GF-2, GF-6, GF-7 | Not Started           |
-| BO-2 | Add a create-board flow with inputs for board name and description.              | BO-1                   | Not Started           |
-| BO-3 | Validate board creation inputs and surface errors clearly in the UI.             | BO-2, GF-7             | Not Started           |
-| BO-4 | Implement board details display for name and description.                        | BO-1                   | Not Started           |
-| BO-5 | Add an edit-board flow for updating board name and description.                  | BO-4                   | Not Started           |
-| BO-6 | Add a delete-board action with confirmation to prevent accidental removal.       | BO-1                   | Not Started           |
-| BO-7 | Refresh the board list and board details after create, edit, and delete actions. | BO-2, BO-4, BO-5, BO-6 | Not Started           |
+| BO-1 | Build the boards view where users can see available boards.                      | AU-4, GF-2, GF-6, GF-7 | Done                  |
+| BO-2 | Add a create-board flow with inputs for board name and description.              | BO-1                   | Done                  |
+| BO-3 | Validate board creation inputs and surface errors clearly in the UI.             | BO-2, GF-7             | Done                  |
+| BO-4 | Implement board details display for name and description.                        | BO-1                   | Done                  |
+| BO-5 | Add an edit-board flow for updating board name and description.                  | BO-4                   | Done                  |
+| BO-6 | Add a delete-board action with confirmation to prevent accidental removal.       | BO-1                   | Done                  |
+| BO-7 | Refresh the board list and board details after create, edit, and delete actions. | BO-2, BO-4, BO-5, BO-6 | Done                  |
 
 
 ## 4. Lists
