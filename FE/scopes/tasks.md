@@ -25,6 +25,7 @@ Status values:
 | GF-9  | Place the user widget at the top-right, next to the theme switch.                                                                             | GF-2, GF-4   | Done                  |
 | GF-10 | Add a collapse toggle (hamburger control) on the left navigation to expand or collapse the sidebar on desktop and close the drawer on mobile. | GF-2, GF-5   | Done                  |
 | GF-11 | Style application scrollbars to better match the Material UI look and dark/light themes.                                                      | GF-3         | Done                  |
+| GF-12 | Only show left side menu drawer if the authenticated user has the 'admin' role.                                                               | GF-2         | Done                  |
 
 
 ## 2. Authentication
@@ -123,12 +124,12 @@ Status values:
 
 | ID   | Task                                                                          | Dependencies     | Implementation Status |
 | ---- | ----------------------------------------------------------------------------- | ---------------- | --------------------- |
-| AD-1 | Build an admin-only user management screen.                                   | AU-4, GF-2, GF-6 | Not Started           |
-| AD-2 | Display a list of users with relevant account details and role information.   | AD-1             | Not Started           |
-| AD-3 | Add actions for managing user access or roles based on authorization rules.   | AD-2             | Not Started           |
-| AD-4 | Build an admin workspace management screen.                                   | AU-4, GF-2, GF-6 | Not Started           |
-| AD-5 | Display available workspaces and their summary information.                   | AD-4             | Not Started           |
-| AD-6 | Add workspace management actions aligned with the allowed admin capabilities. | AD-5             | Not Started           |
-| AD-7 | Restrict admin screens and actions to authorized roles only.                  | GF-6, AD-1, AD-4 | Not Started           |
+| AD-1 | Build an admin-only user management screen.                                   | AU-4, GF-2, GF-6 | Done                  |
+| AD-2 | Display a list of users with relevant account details and role information.   | AD-1             | Done                  |
+| AD-3 | Add actions for managing user access or roles based on authorization rules.   | AD-2             | Done                  |
+| AD-4 | Build an admin workspace management screen.                                   | AU-4, GF-2, GF-6 | Done                  |
+| AD-5 | Display available workspaces and their summary information.                   | AD-4             | Done                  |
+| AD-6 | Add workspace management actions aligned with the allowed admin capabilities. | AD-5             | Done                  |
+| AD-7 | Restrict admin screens and actions to authorized roles only.                  | GF-6, AD-1, AD-4 | Done                  |
 
 

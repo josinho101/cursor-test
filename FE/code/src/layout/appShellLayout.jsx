@@ -44,6 +44,8 @@ export function AppShellLayout() {
     getStoredSidebarNavCollapsed
   );
 
+  const isAdmin = user?.role === "admin";
+
   const navItems = useMemo(
     () => [
       {
@@ -172,7 +174,7 @@ export function AppShellLayout() {
         }}
       >
         <Toolbar>
-          {!isDesktop && (
+          {!isDesktop && isAdmin && (
             <IconButton
               color="inherit"
               edge="start"
@@ -213,7 +215,7 @@ export function AppShellLayout() {
       <Box
         component="nav"
         sx={{
-          width: { md: resolvedDrawerWidth },
+          width: { md: isAdmin ? resolvedDrawerWidth : 0 },
           flexShrink: { md: 0 },
           transition: (theme) =>
             theme.transitions.create("width", {
@@ -223,30 +225,32 @@ export function AppShellLayout() {
         }}
         aria-label="Sidebar navigation"
       >
-        <Drawer
-          variant={isDesktop ? "permanent" : "temporary"}
-          open={isDesktop ? true : mobileOpen}
-          onClose={toggleMobileDrawer}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            "& .MuiDrawer-paper": {
-              width: isDesktop ? resolvedDrawerWidth : drawerWidth,
-              boxSizing: "border-box",
-              transition: (t) =>
-                t.transitions.create("width", {
-                  easing: t.transitions.easing.sharp,
-                  duration: t.transitions.duration.leavingScreen
-                }),
-              overflowX: "hidden",
-              ...(isDesktop && {
-                top: desktopDrawerTop,
-                height: `calc(100dvh - ${desktopDrawerTop})`
-              })
-            }
-          }}
-        >
-          {drawer}
-        </Drawer>
+        {isAdmin && (
+          <Drawer
+            variant={isDesktop ? "permanent" : "temporary"}
+            open={isDesktop ? true : mobileOpen}
+            onClose={toggleMobileDrawer}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: isDesktop ? resolvedDrawerWidth : drawerWidth,
+                boxSizing: "border-box",
+                transition: (t) =>
+                  t.transitions.create("width", {
+                    easing: t.transitions.easing.sharp,
+                    duration: t.transitions.duration.leavingScreen
+                  }),
+                overflowX: "hidden",
+                ...(isDesktop && {
+                  top: desktopDrawerTop,
+                  height: `calc(100dvh - ${desktopDrawerTop})`
+                })
+              }
+            }}
+          >
+            {drawer}
+          </Drawer>
+        )}
       </Box>
 
       <Box
