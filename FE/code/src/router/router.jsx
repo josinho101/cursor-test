@@ -10,6 +10,7 @@ import { RootRedirect } from "./rootRedirect.jsx";
 import { LoginScreen } from "../screens/loginScreen.jsx";
 import { BoardsScreen } from "../screens/boardsScreen.jsx";
 import { BoardDetailScreen } from "../screens/boardDetailScreen.jsx";
+import { SearchScreen } from "../screens/searchScreen.jsx";
 import { AdminScreen } from "../screens/adminScreen.jsx";
 import { ForbiddenScreen } from "../screens/forbiddenScreen.jsx";
 import { NotFoundScreen } from "../screens/notFoundScreen.jsx";
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "boards/:boardId",
         element: <BoardDetailScreen />
+      },
+      {
+        path: "search",
+        element: <SearchScreen />
       },
       {
         path: "admin",

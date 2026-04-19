@@ -108,14 +108,14 @@ Status values:
 
 | ID   | Task                                                                      | Dependencies            | Implementation Status |
 | ---- | ------------------------------------------------------------------------- | ----------------------- | --------------------- |
-| SF-1 | Add a global search entry point accessible from the main application UI.  | GF-2                    | Not Started           |
-| SF-2 | Implement search results across boards and cards.                         | SF-1, BO-1, CA-1        | Not Started           |
-| SF-3 | Support searching by title and description.                               | SF-2                    | Not Started           |
-| SF-4 | Support searching by labels, assigned members, and due dates.             | SF-2, CA-8, CA-9, CA-10 | Not Started           |
-| SF-5 | Add card filtering by member within board views.                          | CA-1, CA-8              | Not Started           |
-| SF-6 | Add card filtering by status within board views.                          | CA-1                    | Not Started           |
-| SF-7 | Ensure search and filter states are reflected clearly in the UI.          | SF-2, SF-5, SF-6        | Not Started           |
-| SF-8 | Provide empty-state messaging when no search or filter results are found. | SF-2, SF-7, GF-7        | Not Started           |
+| SF-1 | Add a global search entry point accessible from the main application UI.  | GF-2                    | Done                  |
+| SF-2 | Implement search results across boards and cards.                         | SF-1, BO-1, CA-1        | Done                  |
+| SF-3 | Support searching by title and description.                               | SF-2                    | Done                  |
+| SF-4 | Support searching by labels, assigned members, and due dates.             | SF-2, CA-8, CA-9, CA-10 | Done                  |
+| SF-5 | Add card filtering by member within board views.                          | CA-1, CA-8              | Done                  |
+| SF-6 | Add card filtering by status within board views.                          | CA-1                    | Done                  |
+| SF-7 | Ensure search and filter states are reflected clearly in the UI.          | SF-2, SF-5, SF-6        | Done                  |
+| SF-8 | Provide empty-state messaging when no search or filter results are found. | SF-2, SF-7, GF-7        | Done                  |
 
 
 ## 8. Admin Features

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   Breadcrumbs,
   Button,
@@ -24,8 +24,22 @@ import { fetchBoardById } from "../services/boardService.js";
 export function BoardDetailScreen() {
   const { boardId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const userId = user?.id ?? "";
+
+  const openCardIdFromQuery = searchParams.get("card") ?? "";
+
+  const handleConsumedOpenCardFromQuery = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("card");
+        return next;
+      },
+      { replace: true }
+    );
+  }, [setSearchParams]);
 
   const assignableMembers = useMemo(() => {
     if (!user) return [];
@@ -148,7 +162,13 @@ export function BoardDetailScreen() {
 
       {!loading && !loadError && board ? (
         <Paper variant="outlined" sx={{ p: 2 }}>
-          <BoardListsSection userId={userId} boardId={board.id} assignableMembers={assignableMembers} />
+          <BoardListsSection
+            userId={userId}
+            boardId={board.id}
+            assignableMembers={assignableMembers}
+            openCardIdFromQuery={openCardIdFromQuery}
+            onConsumedOpenCardFromQuery={handleConsumedOpenCardFromQuery}
+          />
         </Paper>
       ) : null}
 

@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -18,10 +18,12 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import { ThemeSwitchControl } from "../components/themeSwitchControl.jsx";
 import { UserWidget } from "../components/userWidget.jsx";
+import { GlobalSearchField } from "../components/globalSearchField.jsx";
 import { useAuth } from "../auth/authProvider.jsx";
 import {
   getStoredSidebarNavCollapsed,
@@ -34,6 +36,7 @@ const drawerWidthCollapsed = 72;
 export function AppShellLayout() {
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const isDesktop = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -180,13 +183,26 @@ export function AppShellLayout() {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" sx={{ flex: 1 }} fontWeight={700}>
-            {location.pathname.startsWith("/app/admin")
-              ? "Admin"
-              : location.pathname.startsWith("/app/boards/")
-                ? "Board"
-                : "Boards"}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1.5} sx={{ flex: 1, minWidth: 0, mr: 1 }}>
+            <Typography variant="h6" sx={{ flexShrink: 0 }} fontWeight={700} noWrap>
+              {location.pathname.startsWith("/app/admin")
+                ? "Admin"
+                : location.pathname.startsWith("/app/search")
+                  ? "Search"
+                  : location.pathname.startsWith("/app/boards/")
+                    ? "Board"
+                    : "Boards"}
+            </Typography>
+            <GlobalSearchField />
+          </Stack>
+          <IconButton
+            color="inherit"
+            aria-label="Open search"
+            onClick={() => navigate("/app/search")}
+            sx={{ display: { xs: "inline-flex", md: "none" } }}
+          >
+            <SearchOutlinedIcon />
+          </IconButton>
           <Stack direction="row" spacing={1} alignItems="center">
             <ThemeSwitchControl />
             <UserWidget />

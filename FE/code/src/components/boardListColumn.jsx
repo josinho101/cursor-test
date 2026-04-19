@@ -30,7 +30,9 @@ import { TaskCard } from "./taskCard.jsx";
  *   onRename: (list: import("../services/listStorage.js").StoredList) => void,
  *   onDelete: (list: import("../services/listStorage.js").StoredList) => void,
  *   onOpenCardDetails: (card: import("../services/cardStorage.js").StoredCard) => void,
- *   onCardsChanged: () => void | Promise<void>
+ *   onCardsChanged: () => void | Promise<void>,
+ *   cardDragDisabled?: boolean,
+ *   filtersActive?: boolean
  * }} props
  */
 export function BoardListColumn({
@@ -42,7 +44,9 @@ export function BoardListColumn({
   onRename,
   onDelete,
   onOpenCardDetails,
-  onCardsChanged
+  onCardsChanged,
+  cardDragDisabled = false,
+  filtersActive = false
 }) {
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -144,14 +148,22 @@ export function BoardListColumn({
         <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
           <Stack spacing={1}>
             {cards.map((card) => (
-              <TaskCard key={card.id} card={card} memberDirectory={memberDirectory} onOpen={onOpenCardDetails} />
+              <TaskCard
+                key={card.id}
+                card={card}
+                memberDirectory={memberDirectory}
+                onOpen={onOpenCardDetails}
+                dragDisabled={cardDragDisabled}
+              />
             ))}
           </Stack>
         </SortableContext>
 
         {cards.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 1, px: 1 }}>
-            No cards yet. Drag cards here or add one below.
+            {filtersActive
+              ? "No cards match the current filters in this list."
+              : "No cards yet. Drag cards here or add one below."}
           </Typography>
         ) : null}
       </Box>

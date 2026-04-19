@@ -18,6 +18,7 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { BoardListColumn } from "./boardListColumn.jsx";
+import { BoardViewFiltersBar } from "./boardViewFiltersBar.jsx";
 import { CardDetailsDialog } from "./cardDetailsDialog.jsx";
 import { CreateListDialog } from "./createListDialog.jsx";
 import { DeleteCardDialog } from "./deleteCardDialog.jsx";
@@ -185,10 +186,18 @@ function CardDragGhost({ card, memberCount }) {
  * @param {{
  *   userId: string,
  *   boardId: string,
- *   assignableMembers: { id: string, name: string }[]
+ *   assignableMembers: { id: string, name: string }[],
+ *   openCardIdFromQuery?: string,
+ *   onConsumedOpenCardFromQuery?: () => void
  * }} props
  */
-export function BoardListsSection({ userId, boardId, assignableMembers }) {
+export function BoardListsSection({
+  userId,
+  boardId,
+  assignableMembers,
+  openCardIdFromQuery = "",
+  onConsumedOpenCardFromQuery
+}) {
   const [lists, setLists] = useState([]);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -201,6 +210,8 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
   const [detailsCard, setDetailsCard] = useState(null);
   const [deleteCard, setDeleteCard] = useState(null);
   const [activeDrag, setActiveDrag] = useState(null);
+  const [filterMemberIds, setFilterMemberIds] = useState([]);
+  const [filterListIds, setFilterListIds] = useState([]);
 
   const memberDirectory = useMemo(() => {
     const m = new Map();
@@ -209,6 +220,29 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
     }
     return m;
   }, [assignableMembers]);
+
+  const filtersActive = filterMemberIds.length > 0 || filterListIds.length > 0;
+  const cardDragDisabled = filtersActive;
+
+  const filteredCards = useMemo(() => {
+    let next = cards;
+    if (filterMemberIds.length > 0) {
+      next = next.filter((c) => {
+        const mids = Array.isArray(c.memberIds) ? c.memberIds : [];
+        return filterMemberIds.some((id) => mids.includes(id));
+      });
+    }
+    if (filterListIds.length > 0) {
+      next = next.filter((c) => filterListIds.includes(c.listId));
+    }
+    return next;
+  }, [cards, filterMemberIds, filterListIds]);
+
+  const visibleCardCount = useMemo(() => {
+    return lists.reduce((sum, list) => sum + sortCardsForList(filteredCards, list.id).length, 0);
+  }, [lists, filteredCards]);
+
+  const hideListsDueToFilters = filtersActive && cards.length > 0 && visibleCardCount === 0;
 
   const reloadBoardData = useCallback(async () => {
     if (!userId || !boardId) {
@@ -238,6 +272,17 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
   useEffect(() => {
     void reloadBoardData();
   }, [reloadBoardData]);
+
+  useEffect(() => {
+    const id = String(openCardIdFromQuery ?? "").trim();
+    if (!id) return;
+    if (loading) return;
+    const match = cards.find((c) => c.id === id);
+    if (match) {
+      setDetailsCard(match);
+    }
+    onConsumedOpenCardFromQuery?.();
+  }, [openCardIdFromQuery, loading, cards, onConsumedOpenCardFromQuery]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -356,6 +401,33 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
 
       {!loading && !loadError && lists.length > 0 ? (
         <Stack spacing={1}>
+          <BoardViewFiltersBar
+            assignableMembers={assignableMembers ?? []}
+            lists={lists}
+            selectedMemberIds={filterMemberIds}
+            onChangeMemberIds={setFilterMemberIds}
+            selectedListIds={filterListIds}
+            onChangeListIds={setFilterListIds}
+            onClearAll={() => {
+              setFilterMemberIds([]);
+              setFilterListIds([]);
+            }}
+          />
+
+          {filtersActive && cards.length > 0 && visibleCardCount === 0 ? (
+            <Paper variant="outlined" sx={{ p: 0 }}>
+              <SharedEmpty
+                title="No cards match these filters"
+                description="Try removing a filter or picking different lists and assignees."
+                actionLabel="Clear filters"
+                onAction={() => {
+                  setFilterMemberIds([]);
+                  setFilterListIds([]);
+                }}
+              />
+            </Paper>
+          ) : null}
+
           {reorderError ? (
             <Typography variant="body2" color="error">
               {reorderError}
@@ -366,52 +438,56 @@ export function BoardListsSection({ userId, boardId, assignableMembers }) {
               {cardOrderError}
             </Typography>
           ) : null}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragCancel={handleDragCancel}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={lists.map((l) => l.id)} strategy={horizontalListSortingStrategy}>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  overflowX: "auto",
-                  pb: 1,
-                  alignItems: "flex-start",
-                  flexWrap: "nowrap"
-                }}
-              >
-                {lists.map((list) => (
-                  <BoardListColumn
-                    key={list.id}
-                    list={list}
-                    cards={sortCardsForList(cards, list.id)}
-                    memberDirectory={memberDirectory}
-                    userId={userId}
-                    boardId={boardId}
-                    onRename={(l) => setRenameList(l)}
-                    onDelete={(l) => setDeleteList(l)}
-                    onOpenCardDetails={(c) => setDetailsCard(c)}
-                    onCardsChanged={reloadBoardData}
+          {!hideListsDueToFilters ? (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragCancel={handleDragCancel}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={lists.map((l) => l.id)} strategy={horizontalListSortingStrategy}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    overflowX: "auto",
+                    pb: 1,
+                    alignItems: "flex-start",
+                    flexWrap: "nowrap"
+                  }}
+                >
+                  {lists.map((list) => (
+                    <BoardListColumn
+                      key={list.id}
+                      list={list}
+                      cards={sortCardsForList(filteredCards, list.id)}
+                      memberDirectory={memberDirectory}
+                      userId={userId}
+                      boardId={boardId}
+                      onRename={(l) => setRenameList(l)}
+                      onDelete={(l) => setDeleteList(l)}
+                      onOpenCardDetails={(c) => setDetailsCard(c)}
+                      onCardsChanged={reloadBoardData}
+                      cardDragDisabled={cardDragDisabled}
+                      filtersActive={filtersActive}
+                    />
+                  ))}
+                </Box>
+              </SortableContext>
+              <DragOverlay>
+                {activeListGhost ? (
+                  <ListDragGhost list={activeListGhost} cardCount={sortCardsForList(cards, activeListGhost.id).length} />
+                ) : null}
+                {activeCardGhost ? (
+                  <CardDragGhost
+                    card={activeCardGhost}
+                    memberCount={Array.isArray(activeCardGhost.memberIds) ? activeCardGhost.memberIds.length : 0}
                   />
-                ))}
-              </Box>
-            </SortableContext>
-            <DragOverlay>
-              {activeListGhost ? (
-                <ListDragGhost list={activeListGhost} cardCount={sortCardsForList(cards, activeListGhost.id).length} />
-              ) : null}
-              {activeCardGhost ? (
-                <CardDragGhost
-                  card={activeCardGhost}
-                  memberCount={Array.isArray(activeCardGhost.memberIds) ? activeCardGhost.memberIds.length : 0}
-                />
-              ) : null}
-            </DragOverlay>
-          </DndContext>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          ) : null}
         </Stack>
       ) : null}
 

@@ -19,13 +19,15 @@ import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
  * @param {{
  *   card: import("../services/cardStorage.js").StoredCard,
  *   memberDirectory: Map<string, { id: string, name: string }>,
- *   onOpen: (card: import("../services/cardStorage.js").StoredCard) => void
+ *   onOpen: (card: import("../services/cardStorage.js").StoredCard) => void,
+ *   dragDisabled?: boolean
  * }} props
  */
-export function TaskCard({ card, memberDirectory, onOpen }) {
+export function TaskCard({ card, memberDirectory, onOpen, dragDisabled = false }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
-    data: { type: "card", listId: card.listId }
+    data: { type: "card", listId: card.listId },
+    disabled: dragDisabled
   });
 
   const style = {
@@ -53,11 +55,12 @@ export function TaskCard({ card, memberDirectory, onOpen }) {
       <Stack direction="row" spacing={0.5} alignItems="flex-start" sx={{ pl: 0.5, pt: 0.5 }}>
         <IconButton
           size="small"
-          aria-label={`Reorder card ${card.title}`}
-          title="Drag to move or reorder"
+          aria-label={dragDisabled ? `Card ${card.title}` : `Reorder card ${card.title}`}
+          title={dragDisabled ? "Clear filters to drag cards" : "Drag to move or reorder"}
           {...attributes}
           {...listeners}
-          sx={{ cursor: "grab", mt: 0.25 }}
+          disabled={dragDisabled}
+          sx={{ cursor: dragDisabled ? "default" : "grab", mt: 0.25 }}
         >
           <DragIndicatorOutlinedIcon fontSize="small" />
         </IconButton>
